@@ -31,12 +31,9 @@ latex_of_pptargs(Ppts, Ltx_ost) :-
     maplist(ppterm_to_latex, Ppts, Ltxargs),
     foldl(string_concat, Ltxargs, "", Ltx_ost).
 %% ppterm_to_latex(+Pp) outputs ppterm [Pp] to stdout
-ppterm_to_latex(['Const', Content]) :-
-    const_to_latex(Content).
-ppterm_to_latex(['Binder', Content]) :-
-    binder_to_latex(Content).
-ppterm_to_latex(['Var', Content]) :-
-    var_to_latex(Content).
+ppterm_to_latex(['Const', Content]) :- const_to_latex(Content).
+ppterm_to_latex(['Binder', Content]) :- binder_to_latex(Content).
+ppterm_to_latex(['Var', Content]) :- var_to_latex(Content).
 
 const_to_latex(json([c_symb=Csym, c_args=[]])) :- format('~a', [Csym]).
 const_to_latex(json([c_symb=Csym, c_args=Carg])) :-
