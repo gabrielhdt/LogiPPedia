@@ -1,12 +1,15 @@
 PROLOG ?= swipl
 BIN = logipp
-TEST = tests/nat_le.json
+TESTFILES = $(sort $(wildcard tests/*.json))
 
 $(BIN): to_latex.pl
 	$(PROLOG) -o $@ -c $<
 
+.PHONY: clean tests.
 tests: $(BIN) $(TEST)
-	./$(BIN) $(TEST)
+	@for file in $(TESTFILES); do \
+		./$(BIN) $$file ; \
+	done
 
-.PHONY: clean.
+clean:
 	-$(RM) $(BIN)
