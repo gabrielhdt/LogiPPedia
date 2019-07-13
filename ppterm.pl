@@ -5,8 +5,6 @@
 :- use_module(library(apply)). % For map, foldl &c.
 
 jatom(null).
-jatom(true).
-jatom(false).
 
 main([Fname]) :-
     echo(['Loading', Fname]),
@@ -46,11 +44,11 @@ var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
     latex_of_pptargs(Varg, Ltxarg),
     format('\\left(~a\\, ~a\\right)', [Vsym, Ltxarg]).
 
+%% No annotation
+binder_to_latex(json([b_symb=Bsym, bound=Boun,
+                      annotation=jatom(null), body=Body])) :-
+    format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, ppterm_to_latex(Body)]).
 binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation=Anno,
                       body=Body])) :-
-    (
-       Anno = jatom(null),
-       format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, ppterm_to_latex(Body)])
-    )
-    ;  format('\\left(~a ~a: ~@, ~@\\right)',
-              [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
+    format('\\left(~a ~a: ~@, ~@\\right)',
+           [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
