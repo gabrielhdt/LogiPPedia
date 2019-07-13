@@ -2,11 +2,11 @@ PROLOG ?= swipl
 BIN = logipp
 TEST = tests/nat_le.json
 
-$(BIN): ppterm.pl
+$(BIN): to_latex.pl
 	$(PROLOG) -o $@ -c $<
 
 tests: $(BIN) $(TEST)
 	./$(BIN) $(TEST)
 
 .PHONY: clean.
-	-$(RM) ppttltx
+	-$(RM) $(BIN)
