@@ -1,0 +1,10 @@
+[ "Binder",
+  { "b_symb": "Π", "bound": "x",
+    "annotation": [ "Const", { "c_symb": "nat.nat", "c_args": [] } ],
+    "body":
+    [ "Binder",
+      { "b_symb": "Π", "bound": "y",
+        "annotation": [ "Const",
+                        { "c_symb": "nat.nat", "c_args": [] } ],
+        "body":
+        [ "Const", { "c_symb": "Prop", "c_args": []}]}]}]
