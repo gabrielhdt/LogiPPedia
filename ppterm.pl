@@ -34,12 +34,20 @@ ppterm_to_latex(['Binder', Content]) :-
 ppterm_to_latex(['Var', Content]) :-
     var_to_latex(Content).
 
+const_to_latex(json([c_symb=Csym, c_args=[]])) :- format('~a', [Csym]).
 const_to_latex(json([c_symb=Csym, c_args=Carg])) :-
     latex_of_pptargs(Carg, Ltxarg),
     format('\\left(~a\\, ~a\\right)', [Csym, Ltxarg]).
+% No arguments version
+var_to_latex(json([v_symb=Vsym, v_args=[]])) :- format('~a', [Vsym]).
+% with arguments
 var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
     latex_of_pptargs(Varg, Ltxarg),
     format('\\left(~a\\, ~a\\right)', [Vsym, Ltxarg]).
+% No annotation version
+binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation='@null',
+                      body=Body])) :-
+    format('\\left(~a ~a, ~a\\right)', [Bsym, Boun, ppterm_to_latex(Body)]).
 binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation=Anno,
                       body=Body])) :-
     format('\\left(~a ~a: ~@, ~@\\right)',
