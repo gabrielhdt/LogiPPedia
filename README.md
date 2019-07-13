@@ -1,12 +1,20 @@
-# Ppterm to LaTeX
+# A pretty printer for logipedia
 
 A quick translator from a
-[Logipedia](https://github.com/deducteam/logipedia) to a latex
-string.
+[Logipedia](https://github.com/deducteam/logipedia) `ppterm` to a latex
+string.  *This is designed to be a prototype only*.
+
+## Requirements
+- swipl
 
 ## Usage
 ```
 ./ppterm.pl <term>.json
+```
+or
+```
+make
+./logipp <term>.json
 ```
 
 ## Examples

@@ -1,5 +1,5 @@
 PROLOG ?= swipl
-BIN = ppttltx
+BIN = logipp
 TEST = tests/nat_le.json
 
 $(BIN): ppterm.pl
