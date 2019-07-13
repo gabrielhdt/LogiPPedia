@@ -2,4 +2,4 @@
   { "b_symb": "λ",
     "bound": "x",
     "annotation": null,
-    "body": [ "Var", { "b_symb": "x", "b_args": [] }]}]
+    "body": [ "Var", { "v_symb": "x", "v_args": [] }]}]
