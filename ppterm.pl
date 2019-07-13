@@ -34,9 +34,7 @@ join_with_sp(Left, Right, Out) :- join_with(Left, "\\, ", Right, Out).
 
 %% [latex_of_pptargs(+Ppts, -Ltx_ost)] concatenates list of ppterm
 %% arguments [Ppts] to a latex string [Ltx_ost].
-latex_of_pptargs(Ppts, Ltx_ost) :-
-    maplist(ppterm_to_latex, Ppts, Ltxargs),
-    foldl(join_with_sp, Ltxargs, "", Ltx_ost).
+latex_of_pptargs(Ppts) :- maplist(ppterm_to_latex, Ppts).
 
 %% ppterm_to_latex(+Pp) outputs ppterm [Pp] to stdout
 ppterm_to_latex(['Const', Content]) :- const_to_latex(Content).
@@ -45,14 +43,13 @@ ppterm_to_latex(['Var', Content]) :- var_to_latex(Content).
 
 const_to_latex(json([c_symb=Csym, c_args=[]])) :- format('~a', [Csym]).
 const_to_latex(json([c_symb=Csym, c_args=Carg])) :-
-    latex_of_pptargs(Carg, Ltxarg),
-    format('\\left(~a\\, ~a\\right)', [Csym, Ltxarg]).
+    format('\\left(~a\\, ~@\\right)', [Csym, latex_of_pptargs(Carg)]).
 % No arguments version
-var_to_latex(json([v_symb=Vsym, v_args=[]])) :- format('~a', [Vsym]).
+var_to_latex(json([v_symb=Vsym, v_args=[]])) :-
+    format('~a', [Vsym]).
 % with arguments
 var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
-    latex_of_pptargs(Varg, Ltxarg),
-    format('\\left(~a\\, ~a\\right)', [Vsym, Ltxarg]).
+    format('\\left(~a\\, ~@\\right)', [Vsym, latex_of_pptargs(Varg)]).
 
 %% No annotation
 binder_to_latex(json([b_symb=Bsym, bound=Boun,
@@ -60,5 +57,6 @@ binder_to_latex(json([b_symb=Bsym, bound=Boun,
     format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, ppterm_to_latex(Body)]).
 binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation=Anno,
                       body=Body])) :-
+    Anno = [_, _],
     format('\\left(~a ~a: ~@, ~@\\right)',
            [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
