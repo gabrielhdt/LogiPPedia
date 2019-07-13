@@ -4,10 +4,14 @@
 :- use_module(library(http/json)).
 :- use_module(library(apply)). % For map, foldl &c.
 
+jatom(null).
+jatom(true).
+jatom(false).
+
 main([Fname]) :-
     echo(['Loading', Fname]),
     json_of(Fname, Jterm),
-    is_json_term(Jterm),
+    is_json_term(Jterm, [null(jatom(null))]),
     ppterm_to_latex(Jterm),
     nl.
 
@@ -19,7 +23,7 @@ echo([H|T]) :- write(H), write(' '), echo(T).
 %% json term [Jterm]
 json_of(Fname, Jterm) :-
     open(Fname, read, Jstream),
-    json_read(Jstream, Jterm).
+    json_read(Jstream, Jterm, [null(jatom(null))]).
 
 %% [latex_of_pptargs(+Ppts, -Ltx_ost)] concatenates list of ppterm
 %% arguments [Ppts] to a latex string [Ltx_ost].
@@ -44,11 +48,12 @@ var_to_latex(json([v_symb=Vsym, v_args=[]])) :- format('~a', [Vsym]).
 var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
     latex_of_pptargs(Varg, Ltxarg),
     format('\\left(~a\\, ~a\\right)', [Vsym, Ltxarg]).
-% No annotation version
-binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation='@null',
-                      body=Body])) :-
-    format('\\left(~a ~a, ~a\\right)', [Bsym, Boun, ppterm_to_latex(Body)]).
+
 binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation=Anno,
                       body=Body])) :-
-    format('\\left(~a ~a: ~@, ~@\\right)',
-           [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
+    (
+       Anno = jatom(null),
+       format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, ppterm_to_latex(Body)])
+    )
+    ;  format('\\left(~a ~a: ~@, ~@\\right)',
+              [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
