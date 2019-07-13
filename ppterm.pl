@@ -42,5 +42,5 @@ var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
     format('\\left(~a\\, ~a\\right)', [Vsym, Ltxarg]).
 binder_to_latex(json([b_symb=Bsym, bound=Boun, annotation=Anno,
                       body=Body])) :-
-    format('\\left(~a ~a: ~a, ~@\\right)',
-           [Bsym, Boun, Anno, ppterm_to_latex(Body)]).
+    format('\\left(~a ~a: ~@, ~@\\right)',
+           [Bsym, Boun, ppterm_to_latex(Anno), ppterm_to_latex(Body)]).
