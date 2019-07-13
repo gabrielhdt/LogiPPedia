@@ -23,33 +23,27 @@ json_of(Fname, Jterm) :-
     open(Fname, read, Jstream),
     json_read(Jstream, Jterm, [null(jatom(null))]).
 
-%% [join_with(+Left, +Mid, +Right, -Out)] is true if [Out] is the
-%% concatenation of strings [Left] and [Right] with [Mid] between them.
-join_with(Left, Mid, Right, Out) :-
-    string_concat(Left, Mid, LeMi),
-    string_concat(LeMi, Right, Out).
-
-%% [join_with_sp(+Left, +Right, -Out)] true if [Out] is "Left\, Right".
-join_with_sp(Left, Right, Out) :- join_with(Left, "\\, ", Right, Out).
-
 %% [latex_of_pptargs(+Ppts, -Ltx_ost)] concatenates list of ppterm
 %% arguments [Ppts] to a latex string [Ltx_ost].
-latex_of_pptargs(Ppts) :- maplist(ppterm_to_latex, Ppts).
+latex_of_pptargs(Ppts) :- maplist(sp_pp, Ppts).
 
 %% ppterm_to_latex(+Pp) outputs ppterm [Pp] to stdout
 ppterm_to_latex(['Const', Content]) :- const_to_latex(Content).
 ppterm_to_latex(['Binder', Content]) :- binder_to_latex(Content).
 ppterm_to_latex(['Var', Content]) :- var_to_latex(Content).
 
+%% prints term T with a space before
+sp_pp(T) :- format('\\, ~@', [ppterm_to_latex(T)]).
+
 const_to_latex(json([c_symb=Csym, c_args=[]])) :- format('~a', [Csym]).
 const_to_latex(json([c_symb=Csym, c_args=Carg])) :-
-    format('\\left(~a\\, ~@\\right)', [Csym, latex_of_pptargs(Carg)]).
+    format('\\left(~a~@\\right)', [Csym, latex_of_pptargs(Carg)]).
 % No arguments version
 var_to_latex(json([v_symb=Vsym, v_args=[]])) :-
     format('~a', [Vsym]).
 % with arguments
 var_to_latex(json([v_symb=Vsym, v_args=Varg])) :-
-    format('\\left(~a\\, ~@\\right)', [Vsym, latex_of_pptargs(Varg)]).
+    format('\\left(~a~@\\right)', [Vsym, latex_of_pptargs(Varg)]).
 
 %% No annotation
 binder_to_latex(json([b_symb=Bsym, bound=Boun,
