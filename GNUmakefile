@@ -8,7 +8,7 @@ $(BIN): to_latex.pl
 .PHONY: clean tests.
 tests: $(BIN) $(TEST)
 	@for file in $(TESTFILES); do \
-		./$(BIN) $$file ; \
+		./$(BIN) < $$file ; \
 	done
 
 clean:

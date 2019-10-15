@@ -1,25 +1,18 @@
 #!/usr/bin/env swipl
-%% Print ppterms to stdout as latex strings.  LaTeX strings may
+%% Print a ppterm from stdin to stdout as latex strings. LaTeX strings may
 %% contain utf-8
 
-:- initialization(main, main).
+:- initialization(parse, main).
 :- use_module(library(http/json)).
 :- use_module(library(apply)). % For map, foldl &c.
 
 jatom(null).
 
-%% Entry point, accepts one file name on argv
-main([Fname]) :-
-    json_of(Fname, Jterm),
+parse :-
+    current_input(Strm),
+    json_read(Strm, Jterm),
     is_json_term(Jterm, [null(jatom(null))]),
-    pp(Jterm),
-    nl.
-
-%% [json_of(+Fname, -Jterm)] reads file with name [Fname] and creates
-%% json term [Jterm]
-json_of(Fname, Jterm) :-
-    open(Fname, read, Jstream),
-    json_read(Jstream, Jterm, [null(jatom(null))]).
+    pp(Jterm).
 
 %% [pp_args(+Ppts, -Ltx_ost)] concatenates list of ppterm
 %% arguments [Ppts] to a latex string [Ltx_ost].
