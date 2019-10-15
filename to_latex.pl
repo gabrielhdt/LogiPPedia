@@ -6,12 +6,10 @@
 :- use_module(library(http/json)).
 :- use_module(library(apply)). % For map, foldl &c.
 
-jatom(null).
-
 parse :-
     current_input(Strm),
     json_read(Strm, Jterm),
-    is_json_term(Jterm, [null(jatom(null))]),
+    is_json_term(Jterm, []),
     pp(Jterm).
 
 %% [pp_args(+Ppts, -Ltx_ost)] concatenates list of ppterm
@@ -44,7 +42,7 @@ pp_var(json([v_symb=Vsym, v_args=Varg])) :-
 %% pp_binder(+Bd) prints the data Bd that was shipped as ['Binder', Bd].
 % No annotation
 pp_binder(json([b_symb=Bsym, bound=Boun,
-                annotation=jatom(null), body=Body])) :-
+                annotation= @(null), body=Body])) :-
     format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, pp(Body)]).
 % With annotation
 pp_binder(json([b_symb=Bsym, bound=Boun, annotation=Anno,
