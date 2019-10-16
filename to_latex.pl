@@ -1,6 +1,9 @@
 #!/usr/bin/env swipl
 %% Print a ppterm from stdin to stdout as latex strings. LaTeX strings may
 %% contain utf-8
+%%
+%% Z the order of the json fields matters:
+%% [v_symb=_, v_args=_] =\= [v_args=_, v_symb=_]
 
 :- initialization(parse, main).
 :- use_module(library(http/json)).
@@ -14,6 +17,7 @@ parse :-
 
 %% [pp_args(+Ppts, -Ltx_ost)] concatenates list of ppterm
 %% arguments [Ppts] to a latex string [Ltx_ost].
+pp_args([]).
 pp_args(Ts) :- maplist(sp_pp, Ts).
 
 %% pp(+Pp) outputs ppterm [Pp] to stdout
@@ -41,13 +45,19 @@ pp_var(json([v_symb=Vsym, v_args=Varg])) :-
 
 %% pp_binder(+Bd) prints the data Bd that was shipped as ['Binder', Bd].
 % No annotation
-pp_binder(json([b_symb=Bsym, b_args=Bargs, bound=Boun,
-                annotation= @(null), body=Body])) :-
+pp_binder(json([b_symb=Bsym,
+                bound=Boun,
+                annotation= @(null),
+                body=Body,
+                b_args=Bargs])) :-
     format('\\left(\\left(~a ~a, ~@\\right)~@\\right)',
            [Bsym, Boun, pp(Body), pp_args(Bargs)]).
 % With annotation
-pp_binder(json([b_symb=Bsym, b_args=Bargs, bound=Boun, annotation=Anno,
-                body=Body])) :-
+pp_binder(json([b_symb=Bsym,
+                bound=Boun,
+                annotation=Anno,
+                body=Body,
+                b_args=Bargs])) :-
     Anno = [_, _],
     format('\\left(\\left(~a ~a: ~@, ~@\\right)~@\\right)',
            [Bsym, Boun, pp(Anno), pp(Body), pp_args(Bargs)]).

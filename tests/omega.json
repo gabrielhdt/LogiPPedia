@@ -1,8 +1,8 @@
 [ "Binder",
   { "b_symb": "λ",
     "bound": "x",
-    "b_args": [],
     "annotation": null,
     "body": [ "Var", { "v_symb": "x",
                        "v_args":
-                       [ ["Var", { "v_symb": "x", "v_args": [] } ]]}]}]
+                       [ ["Var", { "v_symb": "x", "v_args": [] } ]]}],
+    "b_args": []}]

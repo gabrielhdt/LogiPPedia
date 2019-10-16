@@ -1,12 +1,13 @@
 [ "Binder",
-  { "b_symb": "Π", "bound": "x",
+  { "b_symb": "Π",
+    "bound": "x",
     "annotation": [ "Const", { "c_symb": "nat.nat", "c_args": [] } ],
-    "b_args": [],
     "body":
     [ "Binder",
       { "b_symb": "Π", "bound": "y",
-        "b_args": [],
         "annotation": [ "Const",
                         { "c_symb": "nat.nat", "c_args": [] } ],
         "body":
-        [ "Const", { "c_symb": "Prop", "c_args": []}]}]}]
+        [ "Const", { "c_symb": "Prop", "c_args": []}],
+        "b_args": []}],
+    "b_args": []}]
