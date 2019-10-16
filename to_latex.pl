@@ -41,12 +41,15 @@ pp_var(json([v_symb=Vsym, v_args=Varg])) :-
 
 %% pp_binder(+Bd) prints the data Bd that was shipped as ['Binder', Bd].
 % No annotation
-pp_binder(json([b_symb=Bsym, bound=Boun,
+pp_binder(json([b_symb=Bsym, b_args=Bargs, bound=Boun,
                 annotation= @(null), body=Body])) :-
-    format('\\left(~a ~a, ~@\\right)', [Bsym, Boun, pp(Body)]).
+    format('\\left(\\left(~a ~a, ~@\\right)~@\\right)',
+           [Bsym, Boun, pp(Body), pp_args(Bargs)]).
 % With annotation
-pp_binder(json([b_symb=Bsym, bound=Boun, annotation=Anno,
+pp_binder(json([b_symb=Bsym, b_args=Bargs, bound=Boun, annotation=Anno,
                 body=Body])) :-
     Anno = [_, _],
-    format('\\left(~a ~a: ~@, ~@\\right)',
-           [Bsym, Boun, pp(Anno), pp(Body)]).
+    format('\\left(\\left(~a ~a: ~@, ~@\\right)~@\\right)',
+           [Bsym, Boun, pp(Anno), pp(Body), pp_args(Bargs)]).
+
+% FIXME pp_binder contains superfluous parens if b_args is empty
