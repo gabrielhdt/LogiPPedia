@@ -2,26 +2,44 @@
 
 A quick translator from a
 [Logipedia](https://github.com/deducteam/logipedia) `ppterm` to a latex
-string.  *This is designed to be a prototype only*.
+string.
+
+There are two implementations, one in Swi-Prolog, and the other in Guile Scheme.
 
 ## Requirements
-- [swipl](https://www.swi-prolog.org)
+- [swipl](https://www.swi-prolog.org) 8.0
+
+or
+- [guile scheme](https://www.gnu.org/software/guile) 2.2
+- [guile json](https://savannah.nongnu.org/projects/guile-json/)
+  (which is available in debian repositories)
+  
+## Building the binary
+### Prolog
+`make prolog` yields a `logipp` binary.
 
 ## Usage
-```
-./to_latex.pl <term>.json
+The usage is the same for any implementation: it takes a json ppterm from stdin
+and outputs the conversion to stdout.
+```sh
+./logipp < <term>.json
 ```
 or
+```sh
+cat <file>.json | ./logipp
 ```
-make
-./logipp <term>.json
+
+### Scheme
+
+``` sh
+guile to_latex.scm < <term>.json
 ```
 
 ## Examples
-```
-$ ./to_latex.pl tests/nat_le.json
+```sh
+./to_latex.pl tests/nat_le.json
 \left(Π x: nat.nat, \left(Π y: nat.nat, Prop\right)\right)
-$ ./to_latex.pl tests/omega.json
+./to_latex.pl tests/omega.json
 \left(λ x, \left(x\, x\right)\right)
 ```
 
