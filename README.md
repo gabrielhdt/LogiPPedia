@@ -16,16 +16,16 @@ or
   
 ## Building the binary
 ### Prolog
-`make prolog` yields a `logipp` binary.
+`make` yields a `logipp` binary.
 
 ## Usage
 The usage is the same for any implementation: it takes a json ppterm from stdin
 and outputs the conversion to stdout.
-```sh
+``` sh
 ./logipp < <term>.json
 ```
 or
-```sh
+``` sh
 cat <file>.json | ./logipp
 ```
 
@@ -37,9 +37,9 @@ guile to_latex.scm < <term>.json
 
 ## Examples
 ```sh
-./to_latex.pl tests/nat_le.json
+./to_latex.pl < tests/nat_le.json
 \left(Π x: nat.nat, \left(Π y: nat.nat, Prop\right)\right)
-./to_latex.pl tests/omega.json
+./to_latex.pl < tests/omega.json
 \left(λ x, \left(x\, x\right)\right)
 ```
 
