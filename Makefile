@@ -5,11 +5,19 @@ TESTFILES = $(sort $(wildcard tests/*.json))
 $(BIN): to_latex.pl
 	$(PROLOG) -o $@ -c $<
 
-.PHONY: clean tests.
-tests: $(BIN) $(TEST)
+.PHONY: tests
+tests: to_latex.scm $(BIN) $(TEST)
+	@echo "Prolog"
 	@for file in $(TESTFILES); do \
 		./$(BIN) < $$file ; \
+		echo "" ; \
+	done
+	@echo "Guile scheme\n"
+	@for file in $(TESTFILES); do \
+		./to_latex.scm < $$file ; \
+		echo '' ; \
 	done
 
+.PHONY: clean
 clean:
 	-$(RM) $(BIN)
