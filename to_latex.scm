@@ -1,7 +1,8 @@
 #!/usr/bin/guile -s
 !#
 (use-modules (json))
-(use-modules (ice-9 match))
+(use-modules (ice-9 match))  ; For pattern matching
+(use-modules (srfi srfi-43)) ; Vectors library
 
 ;; Pretty prints json ppterm to LaTeX strings. All 'pp*' function return
 ;; strings, the main function prints the string gathered to stdout.
@@ -35,10 +36,11 @@ first lexicographically)."
 
 (define (pp_args ts)
   "Prints ts as a list of arguments."
-  (let ((sp_pp
-         (lambda (t)
-           (string-concatenate/shared `("\\ " ,(pp t))))))
-    (for-each sp_pp ts)))
+  (let* ((sp_pp
+          (lambda (_ t)
+            (string-concatenate/shared `("\\ " ,(pp t)))))
+         (spaced (vector-map sp_pp ts)))
+    (string-concatenate (vector->list spaced))))
 
 (define (pp_annot annot)
   "Prints annot as an annotation, that is ': annot'."
