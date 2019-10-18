@@ -12,9 +12,13 @@
       (set-port-encoding! (current-input-port) "UTF-8")
       (display ppstr))))
 
-(define (sp-less p q)
-  "Lexicographic ordering on first element of pairs p and q."
-  (string<? (car p) (car q)))
+(define (normalise-object obj)
+  "Put a scheme alist coming from a json object in normal form (that is, sort
+first lexicographically)."
+  (let ((sp-less ; Comparison on string pairs
+         (lambda (p q)
+           (string<? (car p) (car q)))))
+    (sort obj sp-less)))
 
 (define (pp ppt)
   "Converts a Scheme representation of a json ppterm to a string."
@@ -42,7 +46,7 @@
 
 (define (pp_const const)
   "Prints constant ct with symbol c as '(c args)'"
-  (match (sort const sp-less)
+  (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
      csym)
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
@@ -50,7 +54,7 @@
 
 (define (pp_var var)
   "Prints variable v of symbol v as '(v args)'"
-  (match (sort var sp-less)
+  (match (normalise-object var)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
      vsym)
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
@@ -59,7 +63,7 @@
 
 (define (pp_binder binder)
   "Given a binder with symbol B, bound variable x and body t, prints 'B x.t'"
-  (match (sort binder sp-less)
+  (match (normalise-object binder)
     ((( "annotation" . anno )
       ( "b_args" . #() )
       ( "b_symb" . symb )
