@@ -12,7 +12,7 @@ There are two implementations, one in Swi-Prolog, and the other in Guile Scheme.
 or
 - [guile scheme](https://www.gnu.org/software/guile) 2.2
 - [guile json](https://savannah.nongnu.org/projects/guile-json/)
-  (which is available in debian repositories)
+  (which is available in debian repositories) 3.2
   
 ## Building the binary
 ### Prolog
