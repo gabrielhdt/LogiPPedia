@@ -27,45 +27,45 @@ first lexicographically)."
   "Converts a Scheme representation of a json ppterm to a string."
   (match ppt
     (#("Const" content)
-     (pp_const content))
+     (pp-const content))
     (#("Binder" content)
-     (pp_binder content))
+     (pp-binder content))
     (#("Var" content)
-     (pp_var content))
+     (pp-var content))
     (_ (throw 'ill-json))))
 
-(define (pp_args ts)
+(define (pp-args ts)
   "Prints ts as a list of arguments."
-  (let* ((sp_pp
+  (let* ((space-pp
           (lambda (_ t)
             (string-concatenate/shared `("\\ " ,(pp t)))))
-         (spaced (vector-map sp_pp ts)))
-    (string-concatenate (vector->list spaced))))
+         (spaced (vector-map space-pp ts)))
+    (string-concatenate/shared (vector->list spaced))))
 
-(define (pp_annot annot)
+(define (pp-annot annot)
   "Prints annot as an annotation, that is ': annot'."
   (match annot
     (#nil "")
     (t (string-concatenate/shared `(": " ,(pp t))))))
 
-(define (pp_const const)
+(define (pp-const const)
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
      csym)
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
-     (string-concatenate/shared `("\\left(" ,csym ,(pp_args cargs) "\\right)")))))
+     (string-concatenate/shared `("\\left(" ,csym ,(pp-args cargs) "\\right)")))))
 
-(define (pp_var var)
+(define (pp-var var)
   "Prints variable v of symbol v as '(v args)'"
   (match (normalise-object var)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
      vsym)
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
      (string-concatenate/shared
-      `("\\left(" ,vsym ,(pp_args vargs) "\\right)")))))
+      `("\\left(" ,vsym ,(pp-args vargs) "\\right)")))))
 
-(define (pp_binder binder)
+(define (pp-binder binder)
   "Given a binder with symbol B, bound variable x and body t, prints 'B x.t'"
   (match (normalise-object binder)
     ((( "annotation" . anno )
@@ -74,7 +74,7 @@ first lexicographically)."
       ( "body" . t )
       ( "bound" . bound ))
      (string-concatenate/shared
-      `("\\left(" ,symb " " ,bound ,(pp_annot anno) ", "
+      `("\\left(" ,symb " " ,bound ,(pp-annot anno) ", "
         ,(pp t) "\\right)")))
     ((( "annotation" . anno )
       ( "b_args" . args )
@@ -82,7 +82,7 @@ first lexicographically)."
       ( "bound" . bound )
       ( "body" . t ))
      (string-concatenate/shared
-      `("\\left(\\left(" ,symb " " ,bound ,(pp_annot anno) ", "
-        ,(pp t) "\\right)" ,(pp_args args) "\\right)")))))
+      `("\\left(\\left(" ,symb " " ,bound ,(pp-annot anno) ", "
+        ,(pp t) "\\right)" ,(pp-args args) "\\right)")))))
 
 (main)
