@@ -1,6 +1,8 @@
 (use-modules (json))
 (use-modules (ice-9 match))
-(use-modules (ice-9 pretty-print))
+
+;; Pretty prints json ppterm to LaTeX strings. All 'pp*' function return
+;; strings, the main function prints the string gathered to stdout.
 
 (define (main)
   (let* ((jsppt (json->scm))
@@ -38,26 +40,26 @@
     (#nil "")
     (t (string-concatenate/shared `(": " ,(pp t))))))
 
-(define (pp_const ct)
+(define (pp_const const)
   "Prints constant ct with symbol c as '(c args)'"
-  (match (sort ct sp-less)
+  (match (sort const sp-less)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
      csym)
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (string-concatenate/shared `("\\left(" ,csym ,(pp_args cargs) "\\right)")))))
 
-(define (pp_var v)
+(define (pp_var var)
   "Prints variable v of symbol v as '(v args)'"
-  (match (sort v sp-less)
+  (match (sort var sp-less)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
      vsym)
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
      (string-concatenate/shared
       `("\\left(" ,vsym ,(pp_args vargs) "\\right)")))))
 
-(define (pp_binder bnd)
+(define (pp_binder binder)
   "Given a binder with symbol B, bound variable x and body t, prints 'B x.t'"
-  (match (sort bnd sp-less)
+  (match (sort binder sp-less)
     ((( "annotation" . anno )
       ( "b_args" . #() )
       ( "b_symb" . symb )
