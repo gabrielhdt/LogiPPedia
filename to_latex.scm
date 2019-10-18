@@ -1,3 +1,5 @@
+#!/usr/bin/guile -s
+!#
 (use-modules (json))
 (use-modules (ice-9 match))
 
