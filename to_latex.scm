@@ -4,6 +4,14 @@
 (use-modules (ice-9 match))  ; For pattern matching
 (use-modules (srfi srfi-43)) ; Vectors library
 
+(add-to-load-path (dirname (current-filename)))
+(use-modules ((extras) #:prefix extras:))
+
+;; Load additionaly bound symbols
+; FIXME the alist should be in a separate file, provided by the user
+(define sttfa '(("sttfa:sttfa/etap.cst" . "η")))
+(define bindings (extras:alist->hash-str-table sttfa))
+
 ;; Pretty prints json ppterm to LaTeX strings. All 'pp*' function return
 ;; strings, the main function prints the string gathered to stdout.
 
@@ -52,7 +60,7 @@ first lexicographically)."
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
-     csym)
+     (extras:ref-or-id bindings csym))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (string-concatenate/shared `("\\left(" ,csym ,(pp-args cargs) "\\right)")))))
 
