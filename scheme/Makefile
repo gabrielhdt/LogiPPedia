@@ -16,6 +16,6 @@ uninstall:
 
 tests:
 	@for file in $(_testfiles); do \
-		./logipp-latex.scm < $$file; \
+		GUILE_LOAD_PATH=. ./logipp-latex < $$file; \
 		echo ''; \
 	done
