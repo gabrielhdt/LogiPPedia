@@ -32,6 +32,4 @@ Usage: ~a [options]
               (format #t "~a\n" version))
           (if help-wanted
               (help (car args))))
-        (let* ((jsppt (json->scm))
-               (ppstr (ltx:pp jsppt)))
-          (display ppstr)))))
+        (ltx:pp (json->scm)))))
