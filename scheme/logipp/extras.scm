@@ -1,12 +1,11 @@
 ;; Some extra functions
-(define-module (extras)
+(define-module (logipp extras)
+  #:use-module (ice-9 hash-table) ; alist->hashx-table
+  #:use-module (srfi srfi-1)      ; assoc
   #:export (hash-str-set!
             hash-str-ref
             ref-or-id
             alist->hash-str-table))
-
-(use-modules (ice-9 hash-table)) ; For alist->hashx-table
-(use-modules (srfi srfi-1))      ; For assoc
 
 ;; String hash table
 (define (str-hash str size)

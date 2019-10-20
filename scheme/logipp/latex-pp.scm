@@ -1,11 +1,8 @@
-(define-module (to_latex)
+(define-module (logipp latex-pp)
+  #:use-module (ice-9 match)  ; Pattern matching
+  #:use-module (srfi srfi-43) ; Vectors
+  #:use-module ((logipp extras) #:prefix extras:)
   #:export (pp))
-
-(use-modules (ice-9 match))  ; For pattern matching
-(use-modules (srfi srfi-43)) ; Vectors library
-
-(add-to-load-path (dirname (current-filename)))
-(use-modules ((extras) #:prefix extras:))
 
 ;; Load additionaly bound symbols
 ; FIXME the alist should be in a separate file, provided by the user
@@ -22,17 +19,6 @@ first lexicographically)."
          (lambda (p q)
            (string<? (car p) (car q)))))
     (sort obj sp-less)))
-
-(define (pp ppt)
-  "Converts a Scheme representation of a json ppterm to a string."
-  (match ppt
-    (#("Const" content)
-     (pp-const content))
-    (#("Binder" content)
-     (pp-binder content))
-    (#("Var" content)
-     (pp-var content))
-    (_ (throw 'ill-json))))
 
 (define (pp-args ts)
   "Prints ts as a list of arguments."
@@ -84,3 +70,18 @@ first lexicographically)."
      (string-concatenate/shared
       `("\\left(\\left(" ,symb " " ,bound ,(pp-annot anno) ", "
         ,(pp t) "\\right)" ,(pp-args args) "\\right)")))))
+
+;;
+;; Public procedure
+;;
+
+(define (pp ppt)
+  "Converts a Scheme representation of a json ppterm to a string."
+  (match ppt
+    (#("Const" content)
+     (pp-const content))
+    (#("Binder" content)
+     (pp-binder content))
+    (#("Var" content)
+     (pp-var content))
+    (_ (throw 'ill-json))))

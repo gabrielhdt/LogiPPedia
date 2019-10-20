@@ -6,8 +6,7 @@
 (use-modules (ice-9 getopt-long))
 (use-modules (json))
 
-(add-to-load-path (dirname (current-filename)))
-(use-modules ((to_latex) #:prefix ltx:))
+(use-modules ((logipp latex-pp) #:prefix ltx:))
 
 (define version "0.0")
 
