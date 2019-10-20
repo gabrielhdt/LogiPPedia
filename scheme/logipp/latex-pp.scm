@@ -9,9 +9,6 @@
 (define sttfa '(("sttfa:sttfa/etap.cst" . "η")))
 (define bindings (extras:alist->hash-str-table sttfa))
 
-;; Pretty prints json ppterm to LaTeX strings. All 'pp*' function return
-;; strings, the main function prints the string gathered to stdout.
-
 (define (normalise-object obj)
   "Put a scheme alist coming from a json object in normal form (that is, sort
 first lexicographically)."
