@@ -12,9 +12,9 @@ tests: to_latex.scm $(BIN) $(TEST)
 		./$(BIN) < $$file ; \
 		echo "" ; \
 	done
-	@echo "Guile scheme\n"
+	@echo "Guile scheme"
 	@for file in $(TESTFILES); do \
-		./to_latex.scm < $$file ; \
+		./logipp.scm < $$file ; \
 		echo '' ; \
 	done
 
