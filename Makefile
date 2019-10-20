@@ -12,11 +12,6 @@ tests: to_latex.scm $(BIN) $(TEST)
 		./$(BIN) < $$file ; \
 		echo "" ; \
 	done
-	@echo "Guile scheme"
-	@for file in $(TESTFILES); do \
-		./logipp.scm < $$file ; \
-		echo '' ; \
-	done
 
 .PHONY: clean
 clean:
