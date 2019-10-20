@@ -1,6 +1,6 @@
-#!/usr/bin/guile -s
-!#
-(use-modules (json))
+(define-module (to_latex)
+  #:export (pp))
+
 (use-modules (ice-9 match))  ; For pattern matching
 (use-modules (srfi srfi-43)) ; Vectors library
 
@@ -14,14 +14,6 @@
 
 ;; Pretty prints json ppterm to LaTeX strings. All 'pp*' function return
 ;; strings, the main function prints the string gathered to stdout.
-
-(define (main)
-  (let* ((jsppt (json->scm))
-         (ppstr (pp jsppt)))
-    (begin
-      (set-port-encoding! (current-output-port) "UTF-8")
-      (set-port-encoding! (current-input-port) "UTF-8")
-      (display ppstr))))
 
 (define (normalise-object obj)
   "Put a scheme alist coming from a json object in normal form (that is, sort
@@ -92,5 +84,3 @@ first lexicographically)."
      (string-concatenate/shared
       `("\\left(\\left(" ,symb " " ,bound ,(pp-annot anno) ", "
         ,(pp t) "\\right)" ,(pp-args args) "\\right)")))))
-
-(main)
