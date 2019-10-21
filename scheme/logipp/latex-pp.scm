@@ -1,5 +1,6 @@
 (define-module (logipp latex-pp)
   #:use-module (ice-9 match)  ; Pattern matching
+  #:use-module (ice-9 regex)
   #:use-module (srfi srfi-43) ; Vectors
   #:use-module ((logipp extras) #:prefix extras:)
   #:export (pp))
@@ -11,11 +12,15 @@
 
 (define (normalise-object obj)
   "Put a scheme alist coming from a json object in normal form (that is, sort
-first lexicographically)."
+lexicographically on keys)."
   (let ((sp-less ; Comparison on string pairs
          (lambda (p q)
            (string<? (car p) (car q)))))
     (sort obj sp-less)))
+
+(define (sanitise id)
+  "Sanitise names for latex, e.g. inserting backslashes"
+  (regexp-substitute/global #f "_" id 'pre "\\_" 'post))
 
 (define (pp-args ts)
   "Prints ts as a list of arguments."
@@ -38,10 +43,10 @@ first lexicographically)."
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
-     (display (extras:ref-or-id bindings csym)))
+     (display (sanitise (extras:ref-or-id bindings csym))))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (begin
-       (format #t "\\left(~a" csym)
+       (format #t "\\left(~a" (sanitise csym))
        (pp-args cargs)
        (display "\\right")))))
 
@@ -49,10 +54,10 @@ first lexicographically)."
   "Prints variable v of symbol v as '(v args)'"
   (match (normalise-object var)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
-     (display vsym))
+     (display (sanitise vsym)))
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
      (begin
-       (format #t "\\left(~a" vsym)
+       (format #t "\\left(~a" (sanitise vsym))
        (pp-args vargs)
        (display "\\right)")))))
 
@@ -65,7 +70,7 @@ first lexicographically)."
       ( "body" . t )
       ( "bound" . bound ))
      (begin
-       (format #t "\\left(~a ~a" symb bound)
+       (format #t "\\left(~a ~a" (sanitise symb) (sanitise bound))
        (pp-annot anno)
        (display ", ")
        (pp t)
@@ -76,7 +81,7 @@ first lexicographically)."
       ( "bound" . bound )
       ( "body" . t ))
      (begin
-       (format #t "\\left(\\left(~a ~a" symb bound)
+       (format #t "\\left(\\left(~a ~a" (sanitise symb) (sanitise bound))
        (pp-annot anno)
        (display ", ")
        (pp t)
