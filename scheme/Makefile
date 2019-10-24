@@ -10,10 +10,12 @@ install:
 	@echo "Installing script to $(BINDIR)"
 	install -D -m 755 logipp-latex $(BINDIR)/logipp-latex
 
+.PHONY: uninstall
 uninstall:
 	-$(RM) -r $(SITE_DIR)/logipp
 	-$(RM) $(BINDIR)/logipp-latex
 
+.PHONY: tests
 tests:
 	@for file in $(_testfiles); do \
 		GUILE_LOAD_PATH=. ./logipp-latex < $$file; \
