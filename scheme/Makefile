@@ -1,6 +1,9 @@
 BINDIR    ?= /usr/local/bin
 SITE_DIR  ?= $(shell guile -c '(display (%site-dir))')
 _testfiles = $(sort $(wildcard ../tests/*.json))
+_sttfatest = $(sort $(wildcard ../tests/*+sttfa.json))
+
+STTFASYMS = uri2syms/sttfa-latex.scm
 
 .PHONY: install
 install:
@@ -19,5 +22,9 @@ uninstall:
 tests:
 	@for file in $(_testfiles); do \
 		GUILE_LOAD_PATH=. ./logipp-latex < $$file; \
+		echo ''; \
+	done
+	@for file in $(_sttfatest); do \
+		GUILE_LOAD_PATH=. ./logipp-latex --symbols $(STTFASYMS) < $$file; \
 		echo ''; \
 	done
