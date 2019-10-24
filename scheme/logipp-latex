@@ -13,7 +13,7 @@
 (define (help progname)
   (format #t "\
 Usage: ~a [options]
-  -m, --symbols    Specify a guile module containing a mapping
+  -m, --symbols    Specify a guile file containing an association list
   -V, --version    Display version
   -h, --help       Display this help
 "
@@ -37,6 +37,8 @@ Usage: ~a [options]
               (help (car args))))
         (if symbols
             (let* ((symport (open-input-file symbols))
-                   (symmap (read symport)))
-              (ltx:pp (json->scm) symmap))
+                   (symalist (read symport)))
+              (if (list? symalist)
+                  (ltx:pp (json->scm) symalist)
+                  (throw 'wrong-symbols-map)))
             (ltx:pp (json->scm))))))
