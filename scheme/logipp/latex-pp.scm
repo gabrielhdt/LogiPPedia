@@ -19,38 +19,44 @@ lexicographically on keys)."
     (sort obj sp-less)))
 
 (define (sanitise id)
-  "Sanitise names for latex, e.g. inserting backslashes"
+  "Sanitise names for latex, e.g. inserting backslashes."
   (regexp-substitute/global #f "_" id 'pre "\\_" 'post))
 
-(define (pp-args ts)
+(define (get-symbol symbols uri)
+  "Call extras:ref-or-id if symbols is not #f, else return uri."
+  (if symbols
+      (extras:ref-or-id symbols uri)
+      uri))
+
+(define (pp-args ts symbols)
   "Prints ts as a list of arguments."
   (let ((space-pp
          (lambda (_ t)
            (begin
              (display "\\ ")
-             (pp t)))))
+             (pp/p t symbols)))))
     (vector-for-each space-pp ts)))
 
-(define (pp-annot annot)
+(define (pp-annot annot symbols)
   "Prints annot as an annotation, that is ': annot'."
   (match annot
     (#nil #nil)
     (t (begin
          (display ": ")
-         (pp t)))))
+         (pp/p t symbols)))))
 
-(define (pp-const const)
+(define (pp-const const symbols)
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
-     (display (sanitise (extras:ref-or-id bindings csym))))
+     (display (sanitise (get-symbol symbols csym))))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (begin
        (format #t "\\left(~a" (sanitise csym))
-       (pp-args cargs)
+       (pp-args cargs symbols)
        (display "\\right")))))
 
-(define (pp-var var)
+(define* (pp-var var #:optional symbols)
   "Prints variable v of symbol v as '(v args)'"
   (match (normalise-object var)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
@@ -58,10 +64,10 @@ lexicographically on keys)."
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
      (begin
        (format #t "\\left(~a" (sanitise vsym))
-       (pp-args vargs)
+       (pp-args vargs symbols)
        (display "\\right)")))))
 
-(define (pp-binder binder)
+(define (pp-binder binder symbols)
   "Given a binder with symbol B, bound variable x and body t, prints 'B x.t'"
   (match (normalise-object binder)
     ((( "annotation" . anno )
@@ -71,9 +77,9 @@ lexicographically on keys)."
       ( "bound" . bound ))
      (begin
        (format #t "\\left(~a ~a" (sanitise symb) (sanitise bound))
-       (pp-annot anno)
+       (pp-annot anno symbols)
        (display ", ")
-       (pp t)
+       (pp/p t symbols)
        (display "\\right)")))
     ((( "annotation" . anno )
       ( "b_args" . args )
@@ -82,24 +88,31 @@ lexicographically on keys)."
       ( "body" . t ))
      (begin
        (format #t "\\left(\\left(~a ~a" (sanitise symb) (sanitise bound))
-       (pp-annot anno)
+       (pp-annot anno symbols)
        (display ", ")
-       (pp t)
+       (pp/p t symbols)
        (display "\\right)")
-       (pp-args args)
+       (pp-args args symbols)
        (display "\\right)")))))
+
+(define (pp/p ppt symbols)
+  "Converts a Scheme representation of a json ppterm to a string with mapping
+from uris to symbols as a hashtable."
+  (match ppt
+    (#("Const" content)
+     (pp-const content symbols))
+    (#("Binder" content)
+     (pp-binder content symbols))
+    (#("Var" content)
+     (pp-var content symbols))
+    (_ (throw 'ill-json))))
 
 ;;
 ;; Public procedure
 ;;
 
-(define (pp ppt)
+(define* (pp ppt #:optional symbols)
   "Converts a Scheme representation of a json ppterm to a string."
-  (match ppt
-    (#("Const" content)
-     (pp-const content))
-    (#("Binder" content)
-     (pp-binder content))
-    (#("Var" content)
-     (pp-var content))
-    (_ (throw 'ill-json))))
+  (if symbols
+      (pp/p ppt (extras:alist->hash-str-table symbols))
+      (pp/p ppt #f)))

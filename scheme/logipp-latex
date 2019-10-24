@@ -13,17 +13,20 @@
 (define (help progname)
   (format #t "\
 Usage: ~a [options]
+  -m, --symbols    Specify a guile module containing a mapping
   -V, --version    Display version
   -h, --help       Display this help
 "
           progname))
 
 (define option-spec
-  '((version (single-char #\V) (value #f))
+  '((symbols (single-char #\m) (value #t))
+    (version (single-char #\V) (value #f))
     (help    (single-char #\h) (value #f))))
 
 (define (main args)
   (let* ((options (getopt-long args option-spec))
+         (symbols (option-ref options 'symbols #f))
          (help-wanted (option-ref options 'help #f))
          (version-wanted (option-ref options 'version #f)))
     (if (or help-wanted version-wanted)
@@ -32,4 +35,8 @@ Usage: ~a [options]
               (format #t "~a\n" version))
           (if help-wanted
               (help (car args))))
-        (ltx:pp (json->scm)))))
+        (if symbols
+            (let* ((symport (open-input-file symbols))
+                   (symmap (read symport)))
+              (ltx:pp (json->scm) symmap))
+            (ltx:pp (json->scm))))))
