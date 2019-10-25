@@ -13,21 +13,21 @@
 (define (help progname)
   (format #t "\
 Usage: ~a [options]
-  -m, --symbols    Specify a guile file containing an association list
-  -V, --version    Display version
-  -h, --help       Display this help
+  -m, --uriconv  Path to association list mapping URIs to symbols
+  -V, --version  Display version
+  -h, --help     Display this help
 "
           progname))
 
 (define option-spec
-  '((symbols (single-char #\m) (value #t))
+  '((uriconv (single-char #\m) (value #t))
     (version (single-char #\V) (value #f))
     (help    (single-char #\h) (value #f))))
 
 (define (main args)
   (let* ((options (getopt-long args option-spec))
-         (symbols (option-ref options 'symbols #f))
-         (help-wanted (option-ref options 'help #f))
+         (uriconv        (option-ref options 'uriconv #f))
+         (help-wanted    (option-ref options 'help    #f))
          (version-wanted (option-ref options 'version #f)))
     (if (or help-wanted version-wanted)
         (begin
@@ -35,10 +35,10 @@ Usage: ~a [options]
               (format #t "~a\n" version))
           (if help-wanted
               (help (car args))))
-        (if symbols
-            (let* ((symport (open-input-file symbols))
-                   (symalist (read symport)))
-              (if (list? symalist)
-                  (ltx:pp (json->scm) symalist)
-                  (throw 'wrong-symbols-map)))
+        (if uriconv
+            (let* ((ucv-port (open-input-file uriconv))
+                   (ucv-alist (read ucv-port)))
+              (if (list? ucv-alist)
+                  (ltx:pp (json->scm) ucv-alist)
+                  (throw 'wrong-uriconv)))
             (ltx:pp (json->scm))))))

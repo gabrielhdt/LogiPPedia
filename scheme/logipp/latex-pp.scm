@@ -5,11 +5,6 @@
   #:use-module ((logipp extras) #:prefix extras:)
   #:export (pp))
 
-;; Load additionaly bound symbols
-; FIXME the alist should be in a separate file, provided by the user
-(define sttfa '(("sttfa:sttfa/etap.cst" . "η")))
-(define bindings (extras:alist->hash-str-table sttfa))
-
 (define (normalise-object obj)
   "Put a scheme alist coming from a json object in normal form (that is, sort
 lexicographically on keys)."
@@ -22,41 +17,41 @@ lexicographically on keys)."
   "Sanitise names for latex, e.g. inserting backslashes."
   (regexp-substitute/global #f "_" id 'pre "\\_" 'post))
 
-(define (get-symbol symbols uri)
-  "Call extras:ref-or-id if symbols is not #f, else return uri."
-  (if symbols
-      (extras:ref-or-id symbols uri)
+(define (get-symbol uriconv uri)
+  "Call extras:ref-or-id if uriconv is not #f, else return uri."
+  (if uriconv
+      (extras:ref-or-id uriconv uri)
       uri))
 
-(define (pp-args ts symbols)
+(define (pp-args ts uriconv)
   "Prints ts as a list of arguments."
   (let ((space-pp
          (lambda (_ t)
            (begin
              (display "\\ ")
-             (pp/p t symbols)))))
+             (pp/p t uriconv)))))
     (vector-for-each space-pp ts)))
 
-(define (pp-annot annot symbols)
+(define (pp-annot annot uriconv)
   "Prints annot as an annotation, that is ': annot'."
   (match annot
     (#nil #nil)
     (t (begin
          (display ": ")
-         (pp/p t symbols)))))
+         (pp/p t uriconv)))))
 
-(define (pp-const const symbols)
+(define (pp-const const uriconv)
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
-     (display (sanitise (get-symbol symbols csym))))
+     (display (sanitise (get-symbol uriconv csym))))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (begin
        (format #t "\\left(~a" (sanitise csym))
-       (pp-args cargs symbols)
+       (pp-args cargs uriconv)
        (display "\\right")))))
 
-(define* (pp-var var #:optional symbols)
+(define* (pp-var var #:optional uriconv)
   "Prints variable v of symbol v as '(v args)'"
   (match (normalise-object var)
     ((( "v_args" . #() ) ( "v_symb" . vsym ))
@@ -64,10 +59,10 @@ lexicographically on keys)."
     ((( "v_args" . vargs ) ( "v_symb" . vsym ))
      (begin
        (format #t "\\left(~a" (sanitise vsym))
-       (pp-args vargs symbols)
+       (pp-args vargs uriconv)
        (display "\\right)")))))
 
-(define (pp-binder binder symbols)
+(define (pp-binder binder uriconv)
   "Given a binder with symbol B, bound variable x and body t, prints 'B x.t'"
   (match (normalise-object binder)
     ((( "annotation" . anno )
@@ -77,9 +72,9 @@ lexicographically on keys)."
       ( "bound" . bound ))
      (begin
        (format #t "\\left(~a ~a" (sanitise symb) (sanitise bound))
-       (pp-annot anno symbols)
+       (pp-annot anno uriconv)
        (display ", ")
-       (pp/p t symbols)
+       (pp/p t uriconv)
        (display "\\right)")))
     ((( "annotation" . anno )
       ( "b_args" . args )
@@ -88,31 +83,31 @@ lexicographically on keys)."
       ( "body" . t ))
      (begin
        (format #t "\\left(\\left(~a ~a" (sanitise symb) (sanitise bound))
-       (pp-annot anno symbols)
+       (pp-annot anno uriconv)
        (display ", ")
-       (pp/p t symbols)
+       (pp/p t uriconv)
        (display "\\right)")
-       (pp-args args symbols)
+       (pp-args args uriconv)
        (display "\\right)")))))
 
-(define (pp/p ppt symbols)
+(define (pp/p ppt uriconv)
   "Converts a Scheme representation of a json ppterm to a string with mapping
-from uris to symbols as a hashtable."
+from uris to uriconv as a hashtable."
   (match ppt
     (#("Const" content)
-     (pp-const content symbols))
+     (pp-const content uriconv))
     (#("Binder" content)
-     (pp-binder content symbols))
+     (pp-binder content uriconv))
     (#("Var" content)
-     (pp-var content symbols))
+     (pp-var content uriconv))
     (_ (throw 'ill-json))))
 
 ;;
 ;; Public procedure
 ;;
 
-(define* (pp ppt #:optional symbols)
+(define* (pp ppt #:optional uriconv)
   "Converts a Scheme representation of a json ppterm to a string."
-  (if symbols
-      (pp/p ppt (extras:alist->hash-str-table symbols))
+  (if uriconv
+      (pp/p ppt (extras:alist->hash-str-table uriconv))
       (pp/p ppt #f)))

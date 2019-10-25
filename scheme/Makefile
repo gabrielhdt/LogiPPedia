@@ -25,6 +25,6 @@ tests:
 		echo ''; \
 	done
 	@for file in $(_sttfatest); do \
-		GUILE_LOAD_PATH=. ./logipp-latex --symbols $(STTFASYMS) < $$file; \
+		GUILE_LOAD_PATH=. ./logipp-latex --uriconv $(STTFASYMS) < $$file; \
 		echo ''; \
 	done
