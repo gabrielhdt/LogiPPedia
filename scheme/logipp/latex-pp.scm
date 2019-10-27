@@ -47,7 +47,7 @@ lexicographically on keys)."
      (display (sanitise (get-symbol uriconv csym))))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (begin
-       (format #t "\\left(~a" (sanitise csym))
+       (format #t "\\left(~a" (sanitise (get-symbol uriconv csym)))
        (pp-args cargs uriconv)
        (display "\\right)")))))
 

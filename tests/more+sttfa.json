@@ -1,0 +1,20 @@
+[
+    "Const",
+    {
+        "c_symb": "sttfa:sttfa/etap.cst",
+        "c_args": [
+            [
+                "Const",
+                {
+                    "c_symb": "sttfa:sttfa/p.cst",
+                    "c_args": [
+                        [
+                            "Const",
+                            { "c_symb": "sttfa:bool/bool.cst", "c_args": [] }
+                        ]
+                    ]
+                }
+            ]
+        ]
+    }
+]
