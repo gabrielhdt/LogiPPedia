@@ -49,7 +49,7 @@ lexicographically on keys)."
      (begin
        (format #t "\\left(~a" (sanitise csym))
        (pp-args cargs uriconv)
-       (display "\\right")))))
+       (display "\\right)")))))
 
 (define* (pp-var var #:optional uriconv)
   "Prints variable v of symbol v as '(v args)'"
