@@ -1,0 +1,15 @@
+[
+      "Const",
+      {
+        "c_symb": "sttfa:sttfa/etap.cst",
+        "c_args": [
+          [
+            "Const",
+            {
+              "c_symb": "sttfa:sttfa/forallk.cst",
+              "c_args": []
+            }
+          ]
+        ]
+      }
+    ]

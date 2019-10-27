@@ -1,8 +1,10 @@
 ;; Mappings from sttfa uris to latex symbols
 (( "sttfa:sttfa/etap.cst"    . "\\eta" )
+ ( "sttfa:sttfa/type.cst"    . "\\mathbb{T}" )
+ ( "sttfa:sttfa/p.cst"       . "\\mathfrak{p}" )
  ( "sttfa:sttfa/arrow.cst"   . "\\to" )
  ( "sttfa:sttfa/bool.cst"    . "\\mathbb{B}" )
  ( "sttfa:sttfa/eps.cst"     . "\\epsilon" )
  ( "sttfa:sttfa/impl.cst"    . "\\Rightarrow" )
  ( "sttfa:sttfa/forallP.cst" . "\\forall_P" )
- ( "stffa:sttfa/forallK.cst" . "\\forall_K" ))
+ ( "sttfa:sttfa/forallK.cst" . "\\forall_K" ))
