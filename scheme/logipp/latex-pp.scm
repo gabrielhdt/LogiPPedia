@@ -44,10 +44,11 @@ lexicographically on keys)."
   "Prints constant ct with symbol c as '(c args)'"
   (match (normalise-object const)
     ((( "c_args" . #() ) ( "c_symb" . csym ))
-     (display (sanitise (get-symbol uriconv csym))))
+     (display (get-symbol uriconv csym)))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
      (begin
-       (format #t "\\left(~a" (sanitise (get-symbol uriconv csym)))
+       (display "\\left(")
+       (display (get-symbol uriconv csym))
        (pp-args cargs uriconv)
        (display "\\right)")))))
 
