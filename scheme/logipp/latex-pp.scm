@@ -15,7 +15,7 @@ lexicographically on keys)."
 
 (define (sanitise id)
   "Sanitise names for latex, e.g. inserting backslashes."
-  (regexp-substitute/global #f "_" id 'pre "\\_" 'post))
+  (regexp-substitute/global #f "(_|\\^)" id 'pre "\\" 1 'post))
 
 (define (get-symbol uriconv uri)
   "Call extras:ref-or-id if uriconv is not #f, else return uri."
