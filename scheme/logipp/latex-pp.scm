@@ -18,10 +18,10 @@ lexicographically on keys)."
   (regexp-substitute/global #f "(_|\\^)" id 'pre "\\" 1 'post))
 
 (define (get-symbol uriconv uri)
-  "Call extras:ref-or-id if uriconv is not #f, else return uri."
+  "Call extras:ref-or-id if uriconv is not #f, else return (sanitised) uri."
   (if uriconv
       (extras:ref-or-id uriconv uri)
-      uri))
+      (sanitise uri)))
 
 (define (pp-args ts uriconv)
   "Prints ts as a list of arguments."
