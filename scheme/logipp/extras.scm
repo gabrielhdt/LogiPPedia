@@ -4,7 +4,7 @@
   #:use-module (srfi srfi-1)      ; assoc
   #:export (hash-str-set!
             hash-str-ref
-            ref-or-id
+            ref-default
             alist->hash-str-table))
 
 ;; String hash table
@@ -21,9 +21,9 @@
 (define (alist->hash-str-table alist)
   (alist->hashx-table str-hash str-assoc alist))
 
-(define (ref-or-id shtbl csym)
-  "Returns the element bound to csym in shtbl, or csym if it is not bound."
+(define (ref-default shtbl csym otherwise)
+  "Returns the element bound to csym in shtbl, or otherwise if it is not bound."
   (let ((binding (hash-str-ref shtbl csym)))
     (if binding
         binding
-        csym)))
+        otherwise)))

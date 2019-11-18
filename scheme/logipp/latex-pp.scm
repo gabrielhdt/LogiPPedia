@@ -20,7 +20,7 @@ lexicographically on keys)."
 (define (get-symbol uriconv uri)
   "Call extras:ref-or-id if uriconv is not #f, else return (sanitised) uri."
   (if uriconv
-      (extras:ref-or-id uriconv uri)
+      (extras:ref-default uriconv uri (sanitise uri))
       (sanitise uri)))
 
 (define (pp-args ts uriconv)
