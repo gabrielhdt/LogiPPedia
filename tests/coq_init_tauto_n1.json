@@ -1,11 +1,11 @@
 [
     "Const",
     {
-        "c_symb": "sttfa:ctpicef/s.cst",
+        "c_symb": "cic:ctpicef/s.cst",
         "c_args": [
             [
                 "Const",
-                { "c_symb": "sttfa:Coq__Init__Tauto/_n0.def", "c_args": [] }
+                { "c_symb": "cic:Coq__Init__Tauto/_n0.def", "c_args": [] }
             ]
         ]
     }

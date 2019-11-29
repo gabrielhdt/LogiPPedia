@@ -13,6 +13,8 @@ lexicographically on keys)."
            (string<? (car p) (car q)))))
     (sort obj sp-less)))
 
+;; Managing symbol name
+
 (define (sanitise id)
   "Sanitise names for latex, e.g. inserting backslashes."
   (regexp-substitute/global #f "(_|\\^)" id 'pre "\\" 1 'post))
@@ -20,15 +22,37 @@ lexicographically on keys)."
 (define (get-symbol uriconv uri)
   "Call extras:ref-or-id if uriconv is not #f, else return (sanitised) uri."
   (if uriconv
-      (extras:ref-default uriconv uri (sanitise uri))
+      (let ((bound (extras:hash-str-ref uriconv uri)))
+        (match bound
+          (#f
+           (sanitise uri))
+          ((sym . _)
+           sym)))
       (sanitise uri)))
+
+(define (infix? uriconv uri)
+  "Returns whether symbol with uri [uri] is declared infix."
+  (if uriconv
+      (let ((bound (extras:hash-str-ref uriconv uri)))
+        (match bound
+          (#f
+           #f)
+          ((_ . properties)
+           (member 'infix properties))))
+      #f))
+
+;; Pretty printing
+
+(define (pp-space)
+  "Prints a LaTeX forced space."
+  (display "\\ "))
 
 (define (pp-args ts uriconv)
   "Prints ts as a list of arguments."
   (let ((space-pp
          (lambda (_ t)
            (begin
-             (display "\\ ")
+             (pp-space)
              (pp/p t uriconv)))))
     (vector-for-each space-pp ts)))
 
@@ -46,11 +70,28 @@ lexicographically on keys)."
     ((( "c_args" . #() ) ( "c_symb" . csym ))
      (display (get-symbol uriconv csym)))
     ((( "c_args" . cargs ) ( "c_symb" . csym ))
-     (begin
-       (display "\\left(")
-       (display (get-symbol uriconv csym))
-       (pp-args cargs uriconv)
-       (display "\\right)")))))
+     (if (and (infix? uriconv csym) (equal? (vector-length cargs) 2))
+         (pp-infix-const csym (vector-ref cargs 0) (vector-ref cargs 1) uriconv)
+         (pp-prefix-const csym cargs uriconv)))))
+
+(define (pp-prefix-const csym cargs uriconv)
+  "Prints csym as a prefix constant with args cargs."
+  (begin
+    (display "\\left(")
+    (display (get-symbol uriconv csym))
+    (pp-args cargs uriconv)
+    (display "\\right)")))
+
+(define (pp-infix-const csym arg-l arg-r uriconv)
+  "Prints an infix constant const with left arg arg-l and right argument arg-r"
+  (begin
+    (display "\\left(")
+    (pp/p arg-l uriconv)
+    (pp-space)
+    (display (get-symbol uriconv csym))
+    (pp-space)
+    (pp/p arg-r uriconv)
+    (display "\\right)")))
 
 (define* (pp-var var #:optional uriconv)
   "Prints variable v of symbol v as '(v args)'"
